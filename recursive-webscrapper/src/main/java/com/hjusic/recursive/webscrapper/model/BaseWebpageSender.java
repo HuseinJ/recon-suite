@@ -23,11 +23,20 @@ public class BaseWebpageSender {
     var iterator = scrapper.iterator();
 
     return () -> {
-      if (iterator.hasNext()) {
-        var page = iterator.next();
-        log.info("Sending page: {}", page.getUrl());
-        return page;
-      } else {
+      try {
+        if (iterator.hasNext()) {
+          var page = iterator.next();
+          if (page.getError() != null) {
+            log.warn("Error scraping {}: {}", page.getUrl(), page.getError());
+          } else {
+            log.info("Successfully scraped page: {}", page.getUrl());
+          }
+          return page;
+        } else {
+          return null;
+        }
+      } catch (Exception e) {
+        log.error("Unexpected error in scraping workflow", e);
         return null;
       }
     };

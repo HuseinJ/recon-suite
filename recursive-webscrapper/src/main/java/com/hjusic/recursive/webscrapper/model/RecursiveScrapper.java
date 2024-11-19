@@ -28,7 +28,10 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
   }
 
   private BaseWebPage getBase(Response response, Document document) throws IOException {
-    var basePage = new BaseWebPage(response.url().toString(), document.toString(), response.statusCode());
+    var basePage = new BaseWebPage();
+    basePage.setUrl(response.url().toString());
+    basePage.setContent(document.toString());
+    basePage.setStatusCode(response.statusCode());
     basePage.getHeaders().putAll(response.headers());
     basePage.getMeta().putAll(document.select("meta").stream().collect(
         Collectors.toMap(
@@ -38,7 +41,6 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
         )
     ));
     basePage.getCookies().putAll(response.cookies());
-
     return basePage;
   }
 
@@ -50,6 +52,7 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
         .collect(Collectors.toList());
   }
 
+  @Override
   public Iterator<BaseWebPage> iterator() {
     return new Iterator<>() {
       private final Queue<String> urlQueue = new LinkedList<>(List.of(urlToScrapp));
@@ -67,18 +70,12 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
 
         String currentUrl = urlQueue.poll();
         if (visitedUrls.contains(currentUrl)) {
-          if(hasNext()){
-            return next();
-          } else {
-            throw new NoSuchElementException("No more pages to scrape.");
-          }
+          return hasNext() ? next() : null;
         }
-
-        Response response = null;
 
         try {
           assert currentUrl != null;
-          response = Jsoup.connect(currentUrl).ignoreContentType(true).execute();
+          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).execute();
           visitedUrls.add(currentUrl);
 
           Document doc = response.parse();
@@ -89,13 +86,13 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
               .forEach(urlQueue::offer);
 
           return getBase(response, doc);
-        } catch (IOException e) {
-          log.error("Failed to scrape {} returned ", currentUrl);
-          if (response == null) {
-            return new BaseWebPage(currentUrl, "", 0);
-          } else {
-            return new BaseWebPage(currentUrl, "", response.statusCode());
-          }
+        } catch (Exception e) {
+          log.error("Failed to scrape {}: {}", currentUrl, e.getMessage());
+          // Return a BaseWebPage with error information
+          BaseWebPage errorPage = new BaseWebPage();
+          errorPage.setUrl(currentUrl);
+          errorPage.setError(e.getMessage());
+          return errorPage;
         }
       }
     };
