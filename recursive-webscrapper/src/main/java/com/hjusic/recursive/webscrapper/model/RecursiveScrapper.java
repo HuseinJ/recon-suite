@@ -4,10 +4,8 @@ import com.hjusic.scrapper.common.model.BaseWebPage;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -21,10 +19,12 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
 
   private final String urlToScrapp;
   private final Set<String> visitedUrls;
+  private final WebsiteQueueManager queueManager;
 
-  public RecursiveScrapper(String urlToScrapp) {
+  public RecursiveScrapper(String urlToScrapp, boolean sameScopeOnly) {
     this.urlToScrapp = urlToScrapp;
     this.visitedUrls = new HashSet<>();
+    this.queueManager = new WebsiteQueueManager(urlToScrapp, visitedUrls, sameScopeOnly);
   }
 
   private BaseWebPage getBase(Response response, Document document) throws IOException {
@@ -55,11 +55,10 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
   @Override
   public Iterator<BaseWebPage> iterator() {
     return new Iterator<>() {
-      private final Queue<String> urlQueue = new LinkedList<>(List.of(urlToScrapp));
 
       @Override
       public boolean hasNext() {
-        return !urlQueue.isEmpty();
+        return queueManager.hasNext();
       }
 
       @Override
@@ -68,22 +67,16 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
           throw new NoSuchElementException("No more pages to scrape.");
         }
 
-        String currentUrl = urlQueue.poll();
-        if (visitedUrls.contains(currentUrl)) {
-          return hasNext() ? next() : null;
-        }
+        String currentUrl = queueManager.next();
+        visitedUrls.add(currentUrl);
 
         try {
-          assert currentUrl != null;
-          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).execute();
-          visitedUrls.add(currentUrl);
-
+          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).maxBodySize(Integer.MAX_VALUE).execute();
           Document doc = response.parse();
-          List<String> newLinks = extractLinks(doc);
 
-          newLinks.stream()
-              .filter(link -> !visitedUrls.contains(link))
-              .forEach(urlQueue::offer);
+          // Extract and queue new links
+          List<String> newLinks = extractLinks(doc);
+          queueManager.addUrls(Set.copyOf(newLinks));
 
           return getBase(response, doc);
         } catch (Exception e) {

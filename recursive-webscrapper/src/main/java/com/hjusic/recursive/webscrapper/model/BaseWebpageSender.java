@@ -17,9 +17,12 @@ public class BaseWebpageSender {
   @Value("${scrapper.delay:1000}") // Default delay is 1000ms (1 second) if not specified
   private long delayInMillis;
 
+  @Value("${scrapper.samescope:true}") // Default delay is 1000ms (1 second) if not specified
+  private boolean sameScope;
+
   @Bean
   public Supplier<BaseWebPage> sendEvents() {
-    var scrapper = new RecursiveScrapper(urlToScrapp);
+    var scrapper = new RecursiveScrapper(urlToScrapp, sameScope);
     var iterator = scrapper.iterator();
 
     return () -> {
