@@ -14,7 +14,7 @@ public class WebsiteQueueManager {
 
   private final Queue<String> urlQueue = new LinkedList<>();
   private final Set<String> visitedUrls;
-  private final Predicate<String> eligibilityPredicate;
+  final Predicate<String> eligibilityPredicate;
 
   public WebsiteQueueManager(String initialUrl, Set<String> visitedUrls, boolean sameScopeOnly) {
     this.visitedUrls = visitedUrls;
