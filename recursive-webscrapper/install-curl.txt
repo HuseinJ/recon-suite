@@ -1,0 +1,4 @@
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{}' \
+  "http://localhost:9393/apps/source/recursive-Webscrapper?uri=maven://com.hjusic:recursiveWebscrapper:0.0.1-SNAPSHOT&bootVersion=3"

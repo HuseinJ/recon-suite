@@ -17,21 +17,16 @@ import org.jsoup.select.Elements;
 @Log4j2
 public class RecursiveScrapper implements Iterable<BaseWebPage> {
 
-  private final String urlToScrapp;
   private final Set<String> visitedUrls;
   private final WebsiteQueueManager queueManager;
 
   public RecursiveScrapper(String urlToScrapp, boolean sameScopeOnly) {
-    this.urlToScrapp = urlToScrapp;
     this.visitedUrls = new HashSet<>();
     this.queueManager = new WebsiteQueueManager(urlToScrapp, visitedUrls, sameScopeOnly);
   }
 
   private BaseWebPage getBase(Response response, Document document) throws IOException {
-    var basePage = new BaseWebPage();
-    basePage.setUrl(response.url().toString());
-    basePage.setContent(document.toString());
-    basePage.setStatusCode(response.statusCode());
+    var basePage = BaseWebPage.from(response.url().toString(), document.toString(), response.statusCode());
     basePage.getHeaders().putAll(response.headers());
     basePage.getMeta().putAll(document.select("meta").stream().collect(
         Collectors.toMap(
