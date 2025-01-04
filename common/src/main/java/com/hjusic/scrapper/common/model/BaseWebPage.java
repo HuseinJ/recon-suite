@@ -13,14 +13,13 @@ import lombok.Value;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BaseWebPage {
   private String url;
-  private String content;
   private Map<String, String> headers = new HashMap<>();
   private int statusCode;
   private Map<String, String> cookies = new HashMap<>();
   private Map<String, String> meta = new HashMap<>();
-  private String error; // Field to capture error details
+  private String error;
 
-  public static BaseWebPage from(String url, String content, int statusCode) {
-    return new BaseWebPage(url, content, new HashMap<>(), statusCode, new HashMap<>(), new HashMap<>(), null);
+  public static BaseWebPage from(String url, int statusCode) {
+    return new BaseWebPage(url, new HashMap<>(), statusCode, new HashMap<>(), new HashMap<>(), null);
   }
 }

@@ -15,10 +15,9 @@ class BaseWebPageTest {
     String content = "<html></html>";
     int statusCode = 200;
 
-    BaseWebPage page = BaseWebPage.from(url, content, statusCode);
+    BaseWebPage page = BaseWebPage.from(url, statusCode);
 
     assertEquals(url, page.getUrl());
-    assertEquals(content, page.getContent());
     assertEquals(statusCode, page.getStatusCode());
     assertNotNull(page.getHeaders());
     assertTrue(page.getHeaders().isEmpty());

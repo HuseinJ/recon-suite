@@ -1,4 +1,4 @@
-package com.hjusic.recursive.webscrapper.model;
+package com.hjusic.recursive.webscraper.model;
 
 import com.hjusic.scrapper.common.model.BaseWebPage;
 import java.io.IOException;
@@ -15,18 +15,20 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 @Log4j2
-public class RecursiveScrapper implements Iterable<BaseWebPage> {
+public class RecursiveScraper implements Iterable<BaseWebPage> {
 
   private final Set<String> visitedUrls;
   private final WebsiteQueueManager queueManager;
+  private ScrapperProperties scrapperProperties;
 
-  public RecursiveScrapper(String urlToScrapp, boolean sameScopeOnly) {
+  public RecursiveScraper(String urlToScrapp, boolean sameScopeOnly, ScrapperProperties scrapperProperties) {
     this.visitedUrls = new HashSet<>();
     this.queueManager = new WebsiteQueueManager(urlToScrapp, visitedUrls, sameScopeOnly);
+    this.scrapperProperties = scrapperProperties;
   }
 
   private BaseWebPage getBase(Response response, Document document) throws IOException {
-    var basePage = BaseWebPage.from(response.url().toString(), document.toString(), response.statusCode());
+    var basePage = BaseWebPage.from(response.url().toString(), response.statusCode());
     basePage.getHeaders().putAll(response.headers());
     basePage.getMeta().putAll(document.select("meta").stream().collect(
         Collectors.toMap(
@@ -39,7 +41,7 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
     return basePage;
   }
 
-  private List<String> extractLinks(Document doc) {
+  List<String> extractLinks(Document doc) {
     Elements links = doc.select("a[href]");
     return links.stream()
         .map(link -> link.absUrl("href")) // Get absolute URL
@@ -66,7 +68,7 @@ public class RecursiveScrapper implements Iterable<BaseWebPage> {
         visitedUrls.add(currentUrl);
 
         try {
-          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).maxBodySize(Integer.MAX_VALUE).execute();
+          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).maxBodySize(scrapperProperties.getMaxBodySize()).execute();
           Document doc = response.parse();
 
           // Extract and queue new links

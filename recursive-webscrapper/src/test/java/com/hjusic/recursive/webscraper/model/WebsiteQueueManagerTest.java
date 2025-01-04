@@ -1,4 +1,4 @@
-package com.hjusic.recursive.webscrapper.model;
+package com.hjusic.recursive.webscraper.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 

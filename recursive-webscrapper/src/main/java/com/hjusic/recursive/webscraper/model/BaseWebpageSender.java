@@ -1,4 +1,4 @@
-package com.hjusic.recursive.webscrapper.model;
+package com.hjusic.recursive.webscraper.model;
 
 import com.hjusic.scrapper.common.model.BaseWebPage;
 import java.util.function.Supplier;
@@ -16,8 +16,8 @@ public class BaseWebpageSender {
 
   @Bean
   public Supplier<BaseWebPage> sendEvents() {
-    var scrapper = new RecursiveScrapper(scrapperProperties.getUrl(),
-        scrapperProperties.isSamescope());
+    var scrapper = new RecursiveScraper(scrapperProperties.getUrl(),
+        scrapperProperties.isSameScope(), scrapperProperties);
     var iterator = scrapper.iterator();
 
     return () -> {

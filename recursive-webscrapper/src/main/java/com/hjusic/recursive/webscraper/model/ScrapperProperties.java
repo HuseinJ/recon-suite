@@ -1,15 +1,20 @@
-package com.hjusic.recursive.webscrapper.model;
+package com.hjusic.recursive.webscraper.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
  * Properties for configuring the web scrapper.
  */
+@Setter
+@Getter
 @Component
 @ConfigurationProperties(prefix = "scrapper")
 public class ScrapperProperties {
 
+  // Getters and setters
   /**
    * URL to start scrapping from.
    */
@@ -23,30 +28,11 @@ public class ScrapperProperties {
   /**
    * If true, only URLs from the same scope as the initial URL will be visited.
    */
-  private boolean samescope;
+  private boolean sameScope;
 
-  // Getters and setters
-  public String getUrl() {
-    return url;
-  }
+  /**
+   * Maximum body size in bytes.
+   */
+  private int maxBodySize;
 
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  public int getDelay() {
-    return delay;
-  }
-
-  public void setDelay(int delay) {
-    this.delay = delay;
-  }
-
-  public boolean isSamescope() {
-    return samescope;
-  }
-
-  public void setSamescope(boolean samescope) {
-    this.samescope = samescope;
-  }
 }

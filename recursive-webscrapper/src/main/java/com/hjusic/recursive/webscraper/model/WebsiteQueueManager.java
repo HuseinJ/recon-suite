@@ -1,4 +1,4 @@
-package com.hjusic.recursive.webscrapper.model;
+package com.hjusic.recursive.webscraper.model;
 
 import java.net.URI;
 import java.net.URISyntaxException;
