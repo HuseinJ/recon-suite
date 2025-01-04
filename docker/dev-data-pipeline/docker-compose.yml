@@ -44,5 +44,21 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql # Persist MySQL data
 
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000" # Forward Grafana's default port
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin # Grafana admin username
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Grafana admin password
+    depends_on:
+      - mysql # Ensure MySQL is up before Grafana starts
+    volumes:
+      - grafana_data:/var/lib/grafana # Persist Grafana data
+    links:
+      - mysql
+
 volumes:
   mysql_data:
+  grafana_data:

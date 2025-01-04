@@ -10,6 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +26,9 @@ public class BaseWebsiteEntity {
   private String url;
   private int statusCode;
   private String error;
+
+  @Temporal(TemporalType.TIMESTAMP)  // Ensure the timestamp is stored as a Date
+  private Date created = new Date();
 
   @ElementCollection // Persist Map as a collection
   @CollectionTable(name = "website_headers", joinColumns = @JoinColumn(name = "website_id"))
@@ -39,7 +45,7 @@ public class BaseWebsiteEntity {
   @ElementCollection
   @CollectionTable(name = "website_meta", joinColumns = @JoinColumn(name = "website_id"))
   @MapKeyColumn(name = "meta_key")
-  @Column(name = "meta_value")
+  @Column(name = "meta_value", length = 65535)
   private final Map<String, String> meta = new HashMap<>();
 
   private BaseWebsiteEntity(Long id, BaseWebPage baseWebPage) {

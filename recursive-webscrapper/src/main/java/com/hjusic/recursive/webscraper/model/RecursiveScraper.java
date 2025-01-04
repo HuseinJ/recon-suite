@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.jsoup.Connection.Response;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -68,7 +69,7 @@ public class RecursiveScraper implements Iterable<BaseWebPage> {
         visitedUrls.add(currentUrl);
 
         try {
-          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).maxBodySize(scrapperProperties.getMaxBodySize()).execute();
+          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).maxBodySize(Integer.MAX_VALUE).execute();
           Document doc = response.parse();
 
           // Extract and queue new links
@@ -82,6 +83,11 @@ public class RecursiveScraper implements Iterable<BaseWebPage> {
           BaseWebPage errorPage = new BaseWebPage();
           errorPage.setUrl(currentUrl);
           errorPage.setError(e.getMessage());
+          if (e instanceof HttpStatusException) {
+            errorPage.setStatusCode(((HttpStatusException) e).getStatusCode());
+          } else {
+            errorPage.setStatusCode(0); // Indicate an unknown status code
+          }
           return errorPage;
         }
       }
