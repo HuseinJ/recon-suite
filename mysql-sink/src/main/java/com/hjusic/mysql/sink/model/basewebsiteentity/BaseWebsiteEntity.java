@@ -1,4 +1,4 @@
-package com.hjusic.mysql.sink.model;
+package com.hjusic.mysql.sink.model.basewebsiteentity;
 
 import com.hjusic.scrapper.common.model.BaseWebPage;
 import jakarta.persistence.CollectionTable;
@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class BaseWebsiteEntity {
   private String error;
 
   @Temporal(TemporalType.TIMESTAMP)  // Ensure the timestamp is stored as a Date
-  private Date created = new Date();
+  private Date created = java.util.Date.from(ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toInstant());
 
   @ElementCollection // Persist Map as a collection
   @CollectionTable(name = "website_headers", joinColumns = @JoinColumn(name = "website_id"))

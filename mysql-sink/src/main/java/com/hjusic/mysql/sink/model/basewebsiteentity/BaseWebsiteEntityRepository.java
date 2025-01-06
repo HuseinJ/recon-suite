@@ -1,4 +1,4 @@
-package com.hjusic.mysql.sink.model;
+package com.hjusic.mysql.sink.model.basewebsiteentity;
 
 import org.springframework.data.repository.CrudRepository;
 

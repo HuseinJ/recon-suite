@@ -1,4 +1,4 @@
-package com.hjusic.mysql.sink.model;
+package com.hjusic.mysql.sink.model.basewebsiteentity;
 
 import com.hjusic.scrapper.common.model.BaseWebPage;
 import java.util.function.Consumer;

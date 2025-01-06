@@ -1,5 +1,7 @@
-package com.hjusic.mysql.sink.model;
+package com.hjusic.mysql.sink.model.basewebsiteEntity;
 
+import com.hjusic.mysql.sink.model.basewebsiteentity.BaseWebsiteEntity;
+import com.hjusic.mysql.sink.model.basewebsiteentity.BaseWebsiteEntityRepository;
 import com.hjusic.scrapper.common.model.BaseWebPage;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -11,8 +13,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
