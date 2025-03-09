@@ -27,7 +27,7 @@ public class UrlFuzzManager {
     this.executorService = Executors.newFixedThreadPool(fuzzProperties.getThreads());
     this.scheduler = Executors.newScheduledThreadPool(1);
 
-    long intervalMillis = 1000L / fuzzProperties.getDelay(); // Calculate interval per request
+    long intervalMillis = 1000L / fuzzProperties.getDelay();
 
     List<String> urls = source.getValueStream().toList();
     Iterator<String> iterator = urls.iterator();
@@ -45,7 +45,7 @@ public class UrlFuzzManager {
         executorService.submit(() -> processUrl(fuzzProperties.getBaseUrl() + url));
       } else {
         completionFuture.complete(null);
-        shutdown(); // Shutdown once processing is done
+        shutdown();
       }
     }, 0, intervalMillis, TimeUnit.MILLISECONDS);
 
@@ -55,8 +55,8 @@ public class UrlFuzzManager {
     try {
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
       connection.setRequestMethod("GET");
-      connection.setConnectTimeout(5000);
-      connection.setReadTimeout(5000);
+      connection.setConnectTimeout(fuzzProperties.getConnectionTimeout());
+      connection.setReadTimeout(fuzzProperties.getReadTimeout());
 
       int responseCode = connection.getResponseCode();
       log.info("{} -> Response: {}", url, responseCode);

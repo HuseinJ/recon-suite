@@ -26,4 +26,14 @@ public class FuzzProperties {
    */
   private Integer delay;
 
+  /**
+   * Connection timeout in milliseconds.
+   */
+  private Integer connectionTimeout;
+
+  /**
+   * Read timeout in milliseconds.
+   */
+  private Integer readTimeout;
+
 }
