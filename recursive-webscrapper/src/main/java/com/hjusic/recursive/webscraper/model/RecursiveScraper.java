@@ -69,7 +69,11 @@ public class RecursiveScraper implements Iterable<BaseWebPage> {
         visitedUrls.add(currentUrl);
 
         try {
-          Response response = Jsoup.connect(currentUrl).ignoreContentType(true).maxBodySize(Integer.MAX_VALUE).execute();
+          Response response = Jsoup.connect(currentUrl)
+              .ignoreContentType(true)
+              .maxBodySize(scrapperProperties.getMaxBodySize())
+              .userAgent("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36")
+              .execute();
           Document doc = response.parse();
 
           // Extract and queue new links

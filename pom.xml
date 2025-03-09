@@ -12,6 +12,7 @@
     <module>common</module>
     <module>recursive-webscrapper</module>
     <module>mysql-sink</module>
+    <module>url-fuzzer</module>
   </modules>
 
   <properties>
